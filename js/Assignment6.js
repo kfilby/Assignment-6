@@ -60,30 +60,43 @@ function ChangeAddress(){
       objRequest.onreadystatechange = function(){
              if (objRequest.readyState == 4 && objRequest.status == 200){
                   var result = JSON.parse(objRequest.responseText);
-                  OperationResult(result, document.getElementById("result2"));
+                  //OperationResult(result, document.getElementById("result2"));
+                  if (result == 1)     {
+                        document.getElementById("result2").innerHTML = "The operation was successful!";
+                  }
+                   else{
+                        document.getElementById("result2").innerHTML = "The operation was not successful!";
+                  }
+            }           
             }
-      }
         objRequest.open("POST", url, true);
         objRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         objRequest.send(updateorder);
-}
+      }
 
 function DeleteCustomer(){
       var objRequest = new XMLHttpRequest();
-      var url = "https://student.business.uab.edu/jsonwebservice/service1.svc/DeleteCustomer/";
-      url += document.getElementById("custid2");
-      
+      var url = "https://student.business.uab.edu/jsonwebservice/service1.svc/deleteCustomer/";
+      url += document.getElementById("custid2").value;
+      var x = confirm("Are you sure you want to delete this user?");
 
 
       objRequest.onreadystatechange = function(){
              if (objRequest.readyState == 4 && objRequest.status == 200){
                   var result = JSON.parse(objRequest.responseText);
-                  OperationResult(result, document.getElementById("result3"));
+                  if(x === true){
+                        //OperationResult(result, document.getElementById("result3"));
+                        if (result.DeleteCustomerResult.WasSuccessful == 1)     {
+                              document.getElementById("result3").innerHTML = "The operation was successful!";
+                        }
+                        else{
+                              document.getElementById("result3").innerHTML = "The operation was not successful!" + "<br>" + result.Exception;
+                        }
+                  }
             }
       }
         objRequest.open("GET", url, true);
-        objRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        objRequest.send(newcustomer);
+        objRequest.send();
       
 }
 
@@ -98,62 +111,3 @@ function OperationResult(output, TargetElement) {
 
 
 
-
-function GetHistory(){
-      var objRequest = new XMLHttpRequest();
-      var url = "https://student.business.uab.edu/jsonwebservice/service1.svc/getCustomerOrderHistory/";
-      url += document.getElementById("custid1").value;
-
-      objRequest.onreadystatechange = function(){
-            if(objRequest.readyState == 4 && objRequest.status == 200){
-                  var output = JSON.parse(objRequest.responseText);
-                  GenerateHistory(output);
-            }
-      }
-      //Initiate the server request
-      objRequest.open("GET", url, true);
-      objRequest.send();
-      }
-
-function GenerateHistory(result){
-      var count = 0;
-      var displaytext = "<table><tr><th>Product Name</th><th>Total Product Qauntity Ordered</th></tr>";
-
-      for(count = 0; count < result.length; count++){
-            displaytext += "<tr><td>" + result[count].ProductName + "</td><td>" + result[count].Total + "</td></tr>";
-      }
-      displaytext += "</table>";
-      document.getElementById("historydisplay").innerHTML = displaytext;
-}
-
-
-function GetOrders(){
-      var objRequest = new XMLHttpRequest();
-
-      var url = "https://student.business.uab.edu/jsonwebservice/service1.svc/getOrdersForCustomer/";
-      url += document.getElementById("custid2").value;
-
-      //Checks that the object has returned data
-      objRequest.onreadystatechange = function(){
-            if(objRequest.readyState == 4 && objRequest.status == 200){
-                  var output = JSON.parse(objRequest.responseText);
-                  GenerateOrders(output);
-            }
-      }
-
-      //Initiate the server request
-      objRequest.open("GET", url, true);
-      objRequest.send();
-}
-
-function GenerateOrders(result){
-      var count = 0;
-      var displaytext = "<table><tr><th>Order Date</th><th>Order ID</th><th>Ship Address</th><th>Ship City</th><th>Ship Name</th><th>Shipe Post Code</th><th>Shipped Date</th></tr>";
-
-      for(count = 0; count < result.GetOrdersForCustomerResult.length; count++){
-            displaytext += "<tr><td>" + result.GetOrdersForCustomerResult[count].OrderDate + "</td><td>" + result.GetOrdersForCustomerResult[count].OrderID + "</td><td>" + result.GetOrdersForCustomerResult[count].ShipAddress + "</td><td>" + result.GetOrdersForCustomerResult[count].ShipCity + "</td><td>" + result.GetOrdersForCustomerResult[count].ShipName + "</td><td>" + result.GetOrdersForCustomerResult[count].ShipPostcode + "</td><td>" + result.GetOrdersForCustomerResult[count].ShippedDate + "</td></tr>";
-            //This line above is really ugly, other than that, table seems fine.
-      }
-      displaytext += "</table>";
-      document.getElementById("orderdisplay").innerHTML = displaytext;
-}
