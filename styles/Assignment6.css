@@ -1,0 +1,9 @@
+section.section1 {display: none; width: 600px;} 
+
+section.section2 {display: none; width: 600px;}
+
+section.section3 {display: none; width: 600px;}
+
+footer {text-align: left; font-style: italic;}
+
+.example {font-style: italic; color: red;}
